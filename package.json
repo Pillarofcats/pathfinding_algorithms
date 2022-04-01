@@ -1,0 +1,14 @@
+{
+  "name": "algorithm_project",
+  "version": "1.0.0",
+  "description": "algorithm project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "heap": "^0.2.7"
+  }
+}

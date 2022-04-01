@@ -1,0 +1,119 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+button,
+select {
+  border-radius: 0.1rem;
+  cursor: pointer;
+  padding: 0.5rem 0.5rem;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+}
+
+.header {
+  letter-spacing: 0.2rem;
+  padding-top: 1rem;
+  padding-bottom: 0.5rem;
+  text-align: center;
+  color: white;
+  background-color: rgb(46, 46, 46);
+}
+
+.nav-algorithms {
+  background-color: rgb(46, 46, 46);
+  color: white;
+  padding-top: 0.5rem;
+  padding-bottom: 1rem;
+  display: flex;
+  flex-flow: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-algorithms > * {
+  color: white;
+  background-color: rgb(121, 92, 202);
+  border: none;
+}
+
+.icon-key-text {
+  display: flex;
+  flex-flow: wrap;
+  justify-content: space-around;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.icon-key-text > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.board {
+  touch-action: none;
+  align-self: center;
+  border-collapse: collapse;
+  /*PREVENT DRAG AND DROP EVENT LISTENERS FROM BUGGING OUT*/
+  user-select: none;
+}
+
+/*Board cells */
+.board td {
+  cursor: default;
+  width: 30px;
+  height: 30px;
+  border: 2px solid rgb(46, 46, 46);
+  transition: background-color 1s ease;
+}
+
+[data-celltype="wall-node"] {
+  background-color: rgb(46, 46, 46);
+}
+
+[data-celltype="final-path-node"] {
+  /* transition: background-color 5s ease; */
+  animation: finalPathNodes 1s ease 0s 1 normal forwards;
+}
+
+[data-celltype="visited-node"] {
+  animation: visitedNodes 1s ease 0s 1 normal forwards;
+}
+
+img {
+  width: 28px;
+  height: 28px;
+  display: block;
+  cursor: move;
+}
+
+[data-dragging="true"] {
+  opacity: 0.5;
+}
+
+@keyframes visitedNodes {
+  from {
+    background-color: rgb(200, 202, 92);
+  }
+  to {
+    background-color: rgb(92, 202, 116);
+  }
+}
+
+@keyframes finalPathNodes {
+  from {
+    background-color: rgb(200, 202, 92);
+  }
+  to {
+    background-color: rgb(121, 92, 202);
+  }
+}
