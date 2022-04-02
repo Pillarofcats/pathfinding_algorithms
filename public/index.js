@@ -677,7 +677,7 @@ startPathAlgorithm.addEventListener("click", function (e) {
 /*------------------MAZE GENERATION SELECTION---------------------------- */
 //Change select element option and update state of mazeSelection
 
-selectedMazeGeneration.addEventListener("click", function (e) {
+selectedMazeGeneration.addEventListener("change", function (e) {
   //Currently pathfinding, cancel click
   if(state.pathFinding === true) {return}
   //Option selected by user in the select element
