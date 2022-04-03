@@ -679,7 +679,12 @@ startPathAlgorithm.addEventListener("click", function (e) {
 
 selectedMazeGeneration.addEventListener("change", function (e) {
   //Currently pathfinding, cancel click
-  if(state.pathFinding === true) {return}
+  if(state.pathFinding === true) {
+    //Reset maze selection
+    selectedMazeGeneration.value = ""
+    state.mazeSelection = ""
+    return
+  }
   //Option selected by user in the select element
   state.mazeSelection = e.target.options[e.target.selectedIndex].value
   //If a valid selection is made do the following
