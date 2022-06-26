@@ -39,6 +39,7 @@ const createBoard = function () {
 
       //Add drop event listener to TD so start/end node images can be relocated
       tableData.ondrop = function (e) {
+        e.preventDefault()
         //e.target is the element that is being targeted for a drop (table data cell)
         //Return if there is already an img in a drop location (prevent dropping image on a cell with image already)
         if(e.target.nodeName === "IMG") {
@@ -379,15 +380,27 @@ function randomMaze() {
 //Event listener function - Draw walls on table (SHARED FUNCTION WITH EVENT:MOUSEMOVE & EVENT:TOUCHMOVE)
 function drawWallsMouse(e) {
   e.preventDefault()
+  //Ignore creating walls when moving over the start-node and end-node
+  if(!e.target.dataset.rc || e.target.dataset.celltype === "start-node" || e.target.dataset.celltype === "end-node") {return}
   //Check if e.target is valid, if so proceed
-  if(e.target === null || e.target.dataset.celltype !== "empty-node") {
+  if(e.target === null || state.previousCellTarget === e.target.dataset.rc) {
     //Element doesn't exist or element doesn't have a nodeName of "TD"
-    return
-  }
+  } else if(e.target.dataset.celltype === "wall-node") {
+    //Remove wall node from state.wallLocations
+    let wallIndexToRemove = state.wallLocations.indexOf(e.target.dataset.rc)
+    if(wallIndexToRemove >= 0) {
+      state.wallLocations.splice(wallIndexToRemove, 1)
+    }
+    //Set cell to empty node
+    e.target.dataset.celltype = "empty-node"
+  } else {
   //Update state wall locations
   state.wallLocations.push(e.target.dataset.rc)
   //Add .wall class to selected table data (cell coordinates in table)
   e.target.dataset.celltype = "wall-node"
+  }
+  //Set previous target to current target in state
+  state.previousCellTarget = e.target.dataset.rc
 }
 
 //EVENT LISTENER FUNCTION
@@ -399,15 +412,28 @@ function drawWallsTouch(e) {
   let x = e.clientX
   let y = e.clientY
   let currentTableData = document.elementFromPoint(x,y)
-  //Check if currentTableData is valid, if so proceed
-  if(currentTableData === null || currentTableData.dataset.celltype !== "empty-node") {
+
+  //Ignore creating walls when moving over the start-node and end-node
+  if(!currentTableData.dataset.rc || currentTableData.dataset.celltype === "start-node" || currentTableData.dataset.celltype === "end-node") {return}
+  //Check if e.target is valid, if so proceed
+  if(currentTableData === null || state.previousCellTarget === currentTableData.dataset.rc) {
     //Element doesn't exist or element doesn't have a nodeName of "TD"
-    return
-  }
+  } else if(currentTableData.dataset.celltype === "wall-node") {
+    //Remove wall node from state.wallLocations
+    let wallIndexToRemove = state.wallLocations.indexOf(currentTableData.dataset.rc)
+    if(wallIndexToRemove >= 0) {
+      state.wallLocations.splice(wallIndexToRemove, 1)
+    }
+    //Set cell to empty node
+    currentTableData.dataset.celltype = "empty-node"
+  } else {
   //Update state wall locations
   state.wallLocations.push(currentTableData.dataset.rc)
   //Add .wall class to selected table data (cell coordinates in table)
   currentTableData.dataset.celltype = "wall-node"
+  }
+  //Set previous target to current target in state
+  state.previousCellTarget = currentTableData.dataset.rc
 }
 
 //EVENT LISTENER FUNCTION
@@ -423,7 +449,7 @@ function startDragImgMouse (e) {
 
 function endDragImgMouse (e) {
   //Valid drop location, update dataset.celltype for cells
-  if(e.dataTransfer.dropEffect === "copy") {
+  // if(e.dataTransfer.dropEffect === "copy") {
     //Change dragstart cell to dataset.celltype="empty-node"
     //e.target.id will give the image id which is: ["start-node", "end-node"]
     const dragStartTarget = document.querySelector(`[data-celltype='${e.target.id}']`)
@@ -431,7 +457,7 @@ function endDragImgMouse (e) {
     //Change dragend cell to dataset.celltype="${e.target.id}"
     const imgEndTarget = document.querySelector(`#${e.target.id}`)
     imgEndTarget.parentNode.dataset.celltype = `${e.target.id}`
-  }
+  // }
   //e.target is element being dragged (image node)
   e.target.dataset.dragging = false
 }
@@ -535,7 +561,8 @@ table.addEventListener("pointerdown", function (e) {
       }
       //DRAW WALLS MOUSE
       //Empty dataset.celltype = "" ,so walls can be added
-      if(e.target.dataset.celltype === "empty-node") {
+      //ADDED || e.target.dataset.celltype === "wall-node"
+      if(e.target.dataset.celltype === "empty-node" || e.target.dataset.celltype === "wall-node") {
         //Add wall for individual pointerdown
         drawWallsMouse(e)
         //Add mousemove event listener
@@ -548,7 +575,7 @@ table.addEventListener("pointerdown", function (e) {
         this.addEventListener("pointermove", dragImgTouch)
       }
       //DRAW WALLS TOUCH - Only add mousemove event listener if 'data-rc' exists (cell coordinate exists in table)
-      if(e.target.dataset.celltype === "empty-node") {
+      if(e.target.dataset.celltype === "empty-node" || e.target.dataset.celltype === "wall-node" ) {
         //Add wall for individual pointerdown
         drawWallsTouch(e)
         //Add mousemove event listener
@@ -565,7 +592,7 @@ table.addEventListener("pointerdown", function (e) {
 
 //Stop adding walls to table or moving start/end image
 table.addEventListener("pointerup", function (e) {
-  e.preventDefault()
+  // e.preventDefault()
   //Currently pathfinding, cancel click
   if(state.pathFinding === true) {return}
   
@@ -722,7 +749,8 @@ let state = {
   wallLocations: [],
   matrice: null,
   rows: null,
-  cols: null
+  cols: null,
+  previousCellTarget: null
 }
 
 //Create table
