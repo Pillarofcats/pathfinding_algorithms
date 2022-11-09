@@ -1,6 +1,6 @@
 /*------------------IMPORTS--------------------- */
 
-let Heap = require("heap")
+import Heap from "./heap"
 
 /*------------------ELEMENT SELECTORS--------------------- */
 const table = document.querySelector('.board')
